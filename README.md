@@ -2,21 +2,18 @@
 
 Fast poisson disk sampling in 2D in Elixir
 
-## Origins of this algorithm
-I stumbled on this elegant visualisation by Jason Davies (https://www.jasondavies.com/poisson-disc/), based on the paper "Fast Poisson Disk Sampling in Arbitrary Dimensions" by Robert Bridson, University of British Columbia.
+## Origins of the algorithm
+I stumbled on this **elegant visualisation by Jason Davies** (https://www.jasondavies.com/poisson-disc/), based on the paper **"Fast Poisson Disk Sampling in Arbitrary Dimensions" by Robert Bridson, University of British Columbia.**
 
 I was looking for an algorithm to place items on a bounded map with an homogenous repartition with a natural feel.
 
 The linked paper on J.Davies's website was really interesting because of its conciseness and clarity. It fits on a single page.
 
-![original paper](paper.pdf.png)
-
 ## Implementation - read a paper together
 
 The code in `fastfish.ex` is **heavily commented** to read along the paper. The main difference is that I need to place a specific number of items with this repartition in an universe, so I don't fill the available space but stop when my items are placed.
 
-![paragraph from the paper](paragraph.png)
-![code for the same paragraph](code.png)
+![the paper, a paragraph, code implementing it](image.png)
 
 ## Usage
 
@@ -47,5 +44,5 @@ iex(1)> Fastfish.sample(200, 200, 5, 30, 0..10 |> Enum.into([]))
 
 ## Roadmap
 
-- [] Compare the naïve implementation backed by a map to other data structures
-- [] Rust FFI via Rustler to build coordinates faster
+- [ ] Compare the naïve implementation backed by a map to other data structures
+- [ ] Rust FFI via Rustler to build coordinates faster
