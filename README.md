@@ -10,8 +10,8 @@ I was looking for an algorithm to place items on a bounded map with an homogenou
 The linked paper on J.Davies's website was really interesting because of its conciseness and clarity. It fits on a single page.
 
 ## Implementation - read a paper together
-
 The code in `fastfish.ex` is **heavily commented** to read along the paper. The main difference is that I need to place a specific number of items with this repartition in an universe, so I don't fill the available space but stop when my items are placed.
+**The cell size is unused at this point**, because I'm working on an adaptation of this algorithm to handle a fixed list of different-radiused disks to be placed from center.
 
 ![the paper, a paragraph, code implementing it](image.png)
 
@@ -45,46 +45,44 @@ iex(1)> Fastfish.sample(200, 200, 5, 30, 0..10 |> Enum.into([]))
 ## Rust NIF
 
 A rust NIF reimplements the `sample/5` function. Here are some benchmarks.
-It seems that the fixed cost of calling into Rust dominates when I need only a few elements. Grid size :
+It seems that the fixed cost of calling into Rust dominates when I need only a few elements.
+The grid size seems to impact performance more than other parameters, and time seems to indeed grow linearly with the number of elements.
+The value of k when K > 30 does not seem to have a lot of effet, mainly because most points are placed well under 30 attempts.
+30 being the value recommended in the paper.
 
 ```
-Name                                                       ips        average  deviation         median         99th %
-Elixir implementation, 500x500 grid, 100 samples        1.25 K        0.80 ms     ±7.62%        0.79 ms        0.94 ms
-Rust implementation, 500x500 grid, 100 samples          0.24 K        4.08 ms     ±1.91%        4.07 ms        4.29 ms
+Comparison:
+Elixir , 500x500 grid, 100 samples, k=30        1.94 K
+Rust   , 500x500 grid, 100 samples, k=30        0.24 K - 7.97x slower +3.60 ms
 
 Comparison:
-Elixir implementation, 500x500 grid, 100 samples        1.25 K
-Rust implementation, 500x500 grid, 100 samples          0.24 K - 5.10x slower +3.28 ms
-
----
-
-Name                                                           ips        average  deviation         median         99th %
-Rust implementation, 5000x5000 grid, 10000 samples            2.22         0.45 s     ±1.17%         0.45 s         0.46 s
-Elixir implementation, 5000x5000 grid, 10000 samples         0.147         6.82 s     ±0.00%         6.82 s         6.82 s
+Rust   , 5000x5000 grid, 10000 samples, k=30          2.23
+Elixir , 5000x5000 grid, 10000 samples, k=30         0.133 - 16.85x slower +7.10 s
 
 Comparison:
-Rust implementation, 5000x5000 grid, 10000 samples            2.22
-Elixir implementation, 5000x5000 grid, 10000 samples         0.147 - 15.16x slower +6.37 s
-
----
-
-Name                                                             ips        average  deviation         median         99th %
-Rust implementation, 25000x25000 grid, 20000 samples           0.105         9.51 s     ±0.00%         9.51 s         9.51 s
-Elixir implementation, 25000x25000 grid, 20000 samples        0.0336        29.75 s     ±0.00%        29.75 s        29.75 s
+Rust   , 25000x25000 grid, 20000 samples, k=30         0.103
+Elixir , 25000x25000 grid, 20000 samples, k=30        0.0294 - 3.50x slower +24.34 s
 
 Comparison:
-Rust implementation, 25000x25000 grid, 20000 samples           0.105
-Elixir implementation, 25000x25000 grid, 20000 samples        0.0336 - 3.13x slower +20.24 s
+Rust   , 5000x5000 grid, 20000 samples, k=30          1.86
+Elixir , 5000x5000 grid, 20000 samples, k=30        0.0292 - 63.72x slower +33.68 s
 
----
-
-Name                                                           ips        average  deviation         median         99th %
-Rust implementation, 5000x5000 grid, 20000 samples            1.87         0.54 s     ±2.77%         0.53 s         0.56 s
-Elixir implementation, 5000x5000 grid, 20000 samples        0.0328        30.47 s     ±0.00%        30.47 s        30.47 s
 
 Comparison:
-Rust implementation, 5000x5000 grid, 20000 samples            1.87
-Elixir implementation, 5000x5000 grid, 20000 samples        0.0328 - 56.86x slower +29.93 s
+Elixir , 500x500 grid, 100 samples, k=60        1.99 K
+Rust   , 500x500 grid, 100 samples, k=60        0.24 K - 8.18x slower +3.62 ms
+
+Comparison:
+Rust   , 5000x5000 grid, 10000 samples, k=60          2.17
+Elixir , 5000x5000 grid, 10000 samples, k=60         0.132 - 16.47x slower +7.13 s
+
+Comparison:
+Rust   , 25000x25000 grid, 20000 samples, k=60         0.104
+Elixir , 25000x25000 grid, 20000 samples, k=60        0.0291 - 3.57x slower +24.73 s
+
+Comparison:
+Rust   , 5000x5000 grid, 20000 samples, k=60          1.81
+Elixir , 5000x5000 grid, 20000 samples, k=60        0.0292 - 62.00x slower +33.68 s
 ```
 
 ## Roadmap

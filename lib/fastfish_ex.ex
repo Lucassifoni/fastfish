@@ -19,16 +19,9 @@ defmodule FastfishEx do
 
     # Step 0 : Initialize a n-dimensional grid for storing samples and accelerating spatial searches
     # Here N = 2
-    # We can't use a List since we'd like O(1) random access at best, but certainly not O(n)
-    # For a first implementation, I'll initialize a map with lines & columns
-    # The value -1 represents the absence of sample.
-    line_cells =
-      Enum.reduce(Range.new(0, domain_width), %{}, fn i, out -> Map.put(out, i, -1) end)
-
-    grid =
-      Enum.reduce(Range.new(0, domain_height), %{}, fn i, lines ->
-        Map.put(lines, i, line_cells)
-      end)
+    # Contrary to my first implementation, there's no need to pre-fill the map as we can just try to find
+    # Y/X coordinates in the map and skip if that's undefined.
+    grid = %{}
 
     # We pick the cell size to be bound by r / sqrt(n) so that each grid cell will contain
     # at most one sample
@@ -189,7 +182,10 @@ defmodule FastfishEx do
   @spec insert_point(map(), number(), number(), any) :: {map(), Fastfish.Point.__struct__}
   def insert_point(grid, x, y, item) do
     point = Fastfish.Point.make(x, y, item)
-    grid = update_in(grid, [trunc(x), trunc(y)], fn _ -> point end)
+    xx = trunc(x)
+    yy = trunc(y)
+    grid_row = Map.get(grid, yy, %{})
+    Map.put(grid, yy, Map.put(grid_row, xx, point))
     {grid, point}
   end
 
@@ -198,6 +194,11 @@ defmodule FastfishEx do
   """
   @spec at_coords(map(), number(), number()) :: Fastfish.Point | -1
   def at_coords(grid, x, y) do
-    Map.get(Map.get(grid, y, %{}), x, -1)
+    row = Map.get(grid, y, nil)
+    if is_nil(row) do
+      -1
+    else
+      Map.get(row, x, -1)
+    end
   end
 end

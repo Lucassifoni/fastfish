@@ -1,57 +1,26 @@
 defmodule Fastfish.Bench do
   def bench() do
-    items = 0..100 |> Enum.into([])
-    width = 500
-    height = 500
-    d = 5.0
-    k = 30
-    p = 100
-    Benchee.run(
-      %{
-        "Elixir implementation, #{width}x#{height} grid, #{p} samples" => fn -> FastfishEx.sample(width, height, d, k, items) end,
-        "Rust implementation, #{width}x#{height} grid, #{p} samples" => fn -> FastfishRS.sample(width, height, d, k, p) end
-      }
-    )
+    params = [
+      {100, 500, 5.0, 30},
+      {10000, 5000, 5.0, 30},
+      {20000, 25000, 5.0, 30},
+      {20000, 5000, 5.0, 30},
+      {100, 500, 5.0, 60},
+      {10000, 5000, 5.0, 60},
+      {20000, 25000, 5.0, 60},
+      {20000, 5000, 5.0, 60}
+    ]
 
-    items = 0..10000 |> Enum.into([])
-    width = 5000
-    height = 5000
-    d = 5.0
-    k = 30
-    p = 10000
-    Benchee.run(
+    Enum.each(params, fn {items, side, distance, k_samples} ->
+      ex_items = 0..items |> Enum.into([])
+      Benchee.run(
       %{
-        "Elixir implementation, #{width}x#{height} grid, #{p} samples" => fn -> FastfishEx.sample(width, height, d, k, items) end,
-        "Rust implementation, #{width}x#{height} grid, #{p} samples" => fn -> FastfishRS.sample(width, height, d, k, p) end
+        "Elixir , #{side}x#{side} grid, #{items} samples, k=#{k_samples}" => fn -> FastfishEx.sample(side, side, distance, k_samples, ex_items) end,
+        "Rust   , #{side}x#{side} grid, #{items} samples, k=#{k_samples}" => fn -> FastfishRS.sample(side, side, distance, k_samples, items) end
       }
     )
-
-    items = 0..20000 |> Enum.into([])
-    width = 25000
-    height = 25000
-    d = 5.0
-    k = 30
-    p = 20000
-    Benchee.run(
-      %{
-        "Elixir implementation, #{width}x#{height} grid, #{p} samples" => fn -> FastfishEx.sample(width, height, d, k, items) end,
-        "Rust implementation, #{width}x#{height} grid, #{p} samples" => fn -> FastfishRS.sample(width, height, d, k, p) end
-      }
-    )
-
-    items = 0..20000 |> Enum.into([])
-    width = 5000
-    height = 5000
-    d = 5.0
-    k = 30
-    p = 20000
-    Benchee.run(
-      %{
-        "Elixir implementation, #{width}x#{height} grid, #{p} samples" => fn -> FastfishEx.sample(width, height, d, k, items) end,
-        "Rust implementation, #{width}x#{height} grid, #{p} samples" => fn -> FastfishRS.sample(width, height, d, k, p) end
-      }
-    )
-  end
+    end)
+end
 end
 
 Fastfish.Bench.bench()
