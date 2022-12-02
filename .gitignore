@@ -26,3 +26,5 @@ fastfish-*.tar
 /tmp/
 
 .DS_Store
+
+priv

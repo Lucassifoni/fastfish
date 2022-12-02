@@ -1,6 +1,6 @@
 # Fastfish
 
-Fast poisson disk sampling in 2D in Elixir
+Fast poisson disk sampling in 2D in Elixir (& Elixir + Rust)
 
 ## Origins of the algorithm
 I stumbled on this **elegant visualisation by Jason Davies** (https://www.jasondavies.com/poisson-disc/), based on the paper **"Fast Poisson Disk Sampling in Arbitrary Dimensions" by Robert Bridson, University of British Columbia.**
@@ -42,7 +42,52 @@ iex(1)> Fastfish.sample(200, 200, 5, 30, 0..10 |> Enum.into([]))
  ]}
 ```
 
+## Rust NIF
+
+A rust NIF reimplements the `sample/5` function. Here are some benchmarks.
+It seems that the fixed cost of calling into Rust dominates when I need only a few elements. Grid size :
+
+```
+Name                                                       ips        average  deviation         median         99th %
+Elixir implementation, 500x500 grid, 100 samples        1.25 K        0.80 ms     ±7.62%        0.79 ms        0.94 ms
+Rust implementation, 500x500 grid, 100 samples          0.24 K        4.08 ms     ±1.91%        4.07 ms        4.29 ms
+
+Comparison:
+Elixir implementation, 500x500 grid, 100 samples        1.25 K
+Rust implementation, 500x500 grid, 100 samples          0.24 K - 5.10x slower +3.28 ms
+
+---
+
+Name                                                           ips        average  deviation         median         99th %
+Rust implementation, 5000x5000 grid, 10000 samples            2.22         0.45 s     ±1.17%         0.45 s         0.46 s
+Elixir implementation, 5000x5000 grid, 10000 samples         0.147         6.82 s     ±0.00%         6.82 s         6.82 s
+
+Comparison:
+Rust implementation, 5000x5000 grid, 10000 samples            2.22
+Elixir implementation, 5000x5000 grid, 10000 samples         0.147 - 15.16x slower +6.37 s
+
+---
+
+Name                                                             ips        average  deviation         median         99th %
+Rust implementation, 25000x25000 grid, 20000 samples           0.105         9.51 s     ±0.00%         9.51 s         9.51 s
+Elixir implementation, 25000x25000 grid, 20000 samples        0.0336        29.75 s     ±0.00%        29.75 s        29.75 s
+
+Comparison:
+Rust implementation, 25000x25000 grid, 20000 samples           0.105
+Elixir implementation, 25000x25000 grid, 20000 samples        0.0336 - 3.13x slower +20.24 s
+
+---
+
+Name                                                           ips        average  deviation         median         99th %
+Rust implementation, 5000x5000 grid, 20000 samples            1.87         0.54 s     ±2.77%         0.53 s         0.56 s
+Elixir implementation, 5000x5000 grid, 20000 samples        0.0328        30.47 s     ±0.00%        30.47 s        30.47 s
+
+Comparison:
+Rust implementation, 5000x5000 grid, 20000 samples            1.87
+Elixir implementation, 5000x5000 grid, 20000 samples        0.0328 - 56.86x slower +29.93 s
+```
+
 ## Roadmap
 
 - [ ] Compare the naïve implementation backed by a map to other data structures
-- [ ] Rust FFI via Rustler to build coordinates faster
+- [x] Rust FFI via Rustler to build coordinates faster
