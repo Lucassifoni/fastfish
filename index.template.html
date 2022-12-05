@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fastfish visualizer</title>
+</head>
+<body>
+    <script>
+        window.__ff_samples__ = %%FFSAMPLES%%;
+    </script>
+    <canvas id="canvas"></canvas>
+    <script type="text/javascript">
+        var c = document.getElementById('canvas');
+        var ctx = c.getContext("2d");
+        c.width = 1280;
+        c.height = 720;
+        ctx.fillStyle = "white";
+        ctx.fillRect(0,0,c.width,c.height);
+        ctx.strokeStyle = 'black';
+        var place_point = function() {
+            if (__ff_samples__.length === 0) return;
+            var [i] = __ff_samples__.splice(0, 1);
+            ctx.beginPath();
+            ctx.arc(i.x, i.y, (i.r / (1.41 * 2)), 0, Math.PI * 2);
+            ctx.closePath();
+            ctx.stroke();
+            setTimeout(place_point, 16);
+        };
+        place_point();
+    </script>
+</body>
+</html>

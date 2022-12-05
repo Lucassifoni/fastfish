@@ -9,6 +9,11 @@ I was looking for an algorithm to place items on a bounded map with an homogenou
 
 The linked paper on J.Davies's website was really interesting because of its conciseness and clarity. It fits on a single page.
 
+## wip notice
+I'm heavily modifying this piece by piece to accomodate placing a fixed number of samples with defined radii.
+
+![](screenshot.jpg)
+
 ## Implementation - read a paper together
 The code in `fastfish.ex` is **heavily commented** to read along the paper. The main difference is that I need to place a specific number of items with this repartition in an universe, so I don't fill the available space but stop when my items are placed.
 **The cell size is unused at this point**, because I'm working on an adaptation of this algorithm to handle a fixed list of different-radiused disks to be placed from center.
