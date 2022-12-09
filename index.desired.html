@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <canvas></canvas>
+
+    <script>
+        let sizes = [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 20];
+        let circle = () => sizes[Math.floor(Math.random() * sizes.length)];
+
+        let circles = [];
+        for (let i = 0; i < 121; i++) {
+            circles.push(circle());
+        }
+
+        const canvas = document.querySelector("canvas");
+
+        const ctx = canvas.getContext("2d");
+        canvas.width = 1080;
+        const W = 1080;
+        canvas.height = 720;
+        const H = 720;
+        const place = ([x, y], r) => {
+            ctx.fillStyle = "black";
+            ctx.beginPath();
+            ctx.arc(x + W / 2, y + H / 2, r, 0, Math.PI * 2);
+            ctx.closePath();
+            ctx.fill();
+        };
+
+        const random_angle = () => Math.random() * 2 * Math.PI;
+
+        const random_coords_around = ([x, y], r1, r2) => {
+            const a = random_angle();
+            const p = distance * 2 + r1 + r2;
+            return [x + p * Math.cos(a), y + p * Math.sin(a)];
+        };
+
+        const distance = 1;
+        let current_coords = [0, 0];
+        let current_radius = circles.pop();
+        place(current_coords, current_radius);
+        let active_circles = [[current_coords, current_radius]];
+        let all_circles = [[current_coords, current_radius]];
+        let active_index = 0;
+
+        const intersects = ([x1, y1], r1, [x2, y2], r2) => {
+            return (
+                Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2)) <= r2 + r1 + distance
+            );
+        };
+
+        const intersects_any = (check, coords, radius) =>
+            check.some((cur) => intersects(coords, radius, cur[0], cur[1]));
+
+        const circles_to_check = (coords, r1, r2) => {
+            return all_circles.filter((c) => {
+                return intersects(c[0], c[1], coords, r1 + distance * 2 + 2 * r2);
+            });
+        };
+
+        while (active_circles.length > 0 && circles.length) {
+            current_coords = active_circles[active_index][0];
+            current_radius = active_circles[active_index][1];
+            let c = circles.pop();
+            let k = 6;
+            let inter = true;
+            let newCoords = [...current_coords];
+            const check = circles_to_check(current_coords, current_radius, c);
+            while (inter && k > 0) {
+                newCoords = random_coords_around(current_coords, current_radius, c);
+                inter = intersects_any(check, newCoords, c);
+                k--;
+            }
+            if (k === 0) {
+                active_circles.splice(active_index, 1);
+                let index = Math.floor(active_circles.length * Math.random());
+                active_index = index;
+                circles.push(c);
+            } else {
+                active_circles.push([newCoords, c]);
+                all_circles.push([newCoords, c]);
+                place(newCoords, c);
+            }
+        }
+    </script>
+</body>
+
+</html>

@@ -23,7 +23,7 @@
             if (__ff_samples__.length === 0) return;
             var [i] = __ff_samples__.splice(0, 1);
             ctx.beginPath();
-            ctx.arc(i.x, i.y, i.r, 0, Math.PI * 2);
+            ctx.arc(i.x + 1280 / 2, i.y + 720 / 2, i.r, 0, Math.PI * 2);
             ctx.closePath();
             ctx.stroke();
             setTimeout(place_point, 16);
