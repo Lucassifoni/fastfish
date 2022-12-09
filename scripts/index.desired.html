@@ -12,16 +12,15 @@
     <canvas></canvas>
 
     <script>
-        let sizes = [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 20];
+        let sizes = [10, 10, 10, 10, 8, 3, 5, 10, 10, 10, 10, 10, 20];
         let circle = () => sizes[Math.floor(Math.random() * sizes.length)];
 
         let circles = [];
-        for (let i = 0; i < 121; i++) {
+        for (let i = 0; i < 500; i++) {
             circles.push(circle());
         }
 
         const canvas = document.querySelector("canvas");
-
         const ctx = canvas.getContext("2d");
         canvas.width = 1080;
         const W = 1080;
@@ -70,7 +69,7 @@
             current_coords = active_circles[active_index][0];
             current_radius = active_circles[active_index][1];
             let c = circles.pop();
-            let k = 6;
+            let k = 30;
             let inter = true;
             let newCoords = [...current_coords];
             const check = circles_to_check(current_coords, current_radius, c);

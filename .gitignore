@@ -28,3 +28,6 @@ fastfish-*.tar
 .DS_Store
 
 priv
+
+index.html
+index.multi.html
