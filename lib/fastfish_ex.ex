@@ -101,7 +101,7 @@ defmodule FastfishEx do
     [i | rest] = Enum.shuffle(active_list)
 
     # Generate up to k points chosen uniformly from the spherical annulus between radius r and 2r around xi
-    # For each point, check if it is whithin distance r of existing samples (using the grid to only test nearby samples)
+    # For each point, check if it is within distance r of existing samples (using the grid to only test nearby samples)
     case generate_point(grid, i, k_samples, radius, bounds, random_radius_fn, cell_size) do
       # If a point is adequately far from existing samples, emit it as the next sample (place it in the grid)
       # and add it to the active list
