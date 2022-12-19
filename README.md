@@ -7,7 +7,7 @@ Fast poisson disk sampling in 2D in Elixir (& Elixir + Rust), also multi-radius 
 ### Origins of the algorithm
 I stumbled on this **elegant visualisation by Jason Davies** (https://www.jasondavies.com/poisson-disc/), based on the paper **"Fast Poisson Disk Sampling in Arbitrary Dimensions" by Robert Bridson, University of British Columbia.**
 
-I was looking for an algorithm to place items on a bounded map with an homogenous repartition with a natural feel.
+I was looking for an algorithm to place items on a bounded map with an homogeneous repartition with a natural feel.
 
 The linked paper on J.Davies's website was really interesting because of its conciseness and clarity. It fits on a single page.
 
