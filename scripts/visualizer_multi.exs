@@ -1,6 +1,4 @@
-list = 0..600 |> Enum.map(fn _ -> if (:rand.uniform() < 0.12), do: 6, else: 6 end)
-
-samples = FastfishMultiradii.place(list, 5, 30) |> Enum.reverse() |> Enum.map(fn c -> %{x: c.x, y: c.y, r: c.r} end)
+samples = FastfishRS.demo_multiradii |> Enum.reverse() |> Enum.map(fn {x, y, r} -> %{x: x, y: y, r: r} end)
 
 template = File.read!("scripts/index.multi.template.html")
 

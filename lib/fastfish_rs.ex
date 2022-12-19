@@ -15,7 +15,7 @@ defmodule FastfishRS do
 
   def demo_multiradii do
     items = 0..500 |> Enum.map(fn _ ->
-      :rand.uniform() * 50.0 + 10.0
+      :rand.uniform() * 5.0 + 7.0
     end)
     sample_multiradii(items, 10.0, 30)
   end

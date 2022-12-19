@@ -24,7 +24,7 @@ fn intersects(x1: f32, y1: f32, r1: f32, x2: f32, y2: f32, r2: f32, distance: f3
     let d = r2 + r1 + distance;
     let dx = x1 - x2;
     let dy = y1 - y2;
-    return dx * dx + dy * dy < d;
+    return dx * dx + dy * dy < (d * d);
 }
 
 fn intersects_any(check: Vec<DataCircle>, x: f32, y: f32, radius: f32, distance: f32) -> bool {
@@ -34,14 +34,14 @@ fn intersects_any(check: Vec<DataCircle>, x: f32, y: f32, radius: f32, distance:
 }
 
 fn circles_to_check(
-    all_circles: Vec<DataCircle>,
+    all_circles: &Vec<DataCircle>,
     x: f32,
     y: f32,
     r1: f32,
     r2: f32,
     distance: f32,
 ) -> Vec<DataCircle> {
-    let res: Vec<DataCircle> = all_circles
+    let res: Vec<DataCircle> = all_circles.clone()
         .into_iter()
         .filter(|c| {
             intersects(
@@ -93,7 +93,7 @@ pub fn place(items: Vec<f32>, distance: f32, k: i32) -> Vec<DataCircle> {
                             let mut inter = true;
                             let mut new_coords = current_coords;
                             let to_check = circles_to_check(
-                                all_circles.clone(),
+                                &all_circles,
                                 current_coords[0],
                                 current_coords[1],
                                 rad,
@@ -117,9 +117,9 @@ pub fn place(items: Vec<f32>, distance: f32, k: i32) -> Vec<DataCircle> {
                                 );
                                 kk = kk - 1;
                             }
-                            if k == 0 {
+                            if kk == 0 {
                                 active_circles.remove(active_index);
-                                active_index = rng.gen::<f32>().trunc() as usize;
+                                active_index = (rng.gen::<f32>() * active_circles.len() as f32).trunc() as usize;
                                 list.push(c);
                             } else {
                                 let f = DataCircle {
